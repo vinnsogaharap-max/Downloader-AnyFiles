@@ -115,56 +115,81 @@
         </div>
         <script src="data.js"></script>
         <script>
+            // --- SETTING LINK IKLAN ---
+            // Masukkan Link Direct/Smartlink Adsterra di sini
+            const LINK_IKLAN = "https://www.effectivegatecpm.com/gx0zdw0qb?key=3a3eb4068f86e5917327ccad5722491e"; 
+
             // --- LOGIKA UTAMA ---
             let path = window.location.pathname; 
             let slug = path.replace("/", "").replace(".html", "");
+            
             let btn = document.getElementById("btn-aksi");
             let slotBawah = document.getElementById("slot-bawah"); 
             let errorMsg = document.getElementById("pesan-error");
             let judul = document.getElementById("judul-file");
+            
             let linkTujuan = "";
-            let sedangMenghitung = false;
+            let tombolMasihDiatas = true;
+            let sedangMenghitung = false; 
             let sudahSiap = false;
-            let tombolMasihDiatas = true; 
-            // Cek Database
+
+            // Cek Database (Pastikan data.js sudah ada isinya)
             if(slug === "" || slug === "index") {
                 judul.innerText = "Selamat Datang";
                 btn.style.display = "none";
                 document.querySelector('.deskripsi').style.display = "none"; 
             } 
-            else if (database_link[slug]) {
+            else if (typeof database_link !== 'undefined' && database_link[slug]) {
                 linkTujuan = database_link[slug];
             } 
             else {
+                // Jika database belum load atau link tidak ada, tetap tampilkan error
+                // (Kecuali kamu mau hardcode link untuk tes)
+                if (typeof database_link === 'undefined') {
+                    console.log("Database belum dimuat");
+                }
                 btn.style.display = "none";
                 errorMsg.style.display = "block";
                 judul.innerText = "File Tidak Ditemukan";
                 document.querySelector('.deskripsi').style.display = "none";
             }
+
             // KLIK TOMBOL
             btn.addEventListener("click", function(e) {
-                // FASE 1: Tombol masih di atas -> Pindah ke Bawah
+                e.preventDefault(); // Matikan fungsi link bawaan
+
+                // FASE 1: Klik Pertama (Buka Iklan + Mulai Timer)
                 if (tombolMasihDiatas) {
-                    e.preventDefault();
-                    // Pindahkan tombol
+                    
+                    // A. Buka Iklan di Tab Baru
+                    window.open(LINK_IKLAN, '_blank');
+
+                    // B. Pindahkan Tombol & Mulai Timer di Tab Ini
                     slotBawah.appendChild(btn); 
                     tombolMasihDiatas = false;
-                    // Scroll ke bawah (Smooth)
+                    
+                    // Scroll ke bawah agar user sadar tombolnya pindah
                     btn.scrollIntoView({behavior: "smooth", block: "center"});
-                    // Jalankan Timer
+                    
+                    // Langsung jalankan timer
                     mulaiHitungMundur();
                 }
-            // FASE 2: Lagi ngitung -> Tahan
+                // FASE 2: Timer Masih Jalan -> Tombol gak bisa dipencet
                 else if (!sudahSiap) {
-                    e.preventDefault();
+                    return; 
                 }
-               // FASE 3: Sudah siap -> Link jalan
+                // FASE 3: Timer Selesai -> Langsung ke File Asli
+                else {
+                    window.location.href = linkTujuan;
+                }
             });
+
             function mulaiHitungMundur() {
                 sedangMenghitung = true;
                 btn.classList.add("lagi-ngitung"); 
-                let detik = 10;
+                let detik = 10; // Durasi hitung mundur
                 btn.innerText = `Please Wait... ${detik}`;
+                
                 let timer = setInterval(function() {
                     detik--;
                     if (detik > 0) {
@@ -175,12 +200,13 @@
                     }
                 }, 1000); 
             }
+
             function berubahJadiLink() {
                 sudahSiap = true; 
                 btn.classList.remove("lagi-ngitung");
                 btn.classList.add("siap"); 
                 btn.innerText = "GO TO LINK >>";
-                btn.href = linkTujuan; 
+                // Link tujuan sudah diset di logika 'click' Fase 3
             }
         </script>
     </body>
