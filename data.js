@@ -6,4 +6,5 @@ const database_link = {
     "zombie-infection-java": "https://sfile.mobi/QRUisaVnsCf",
     "CONFIG-HC-V109": "https://sfile.mobi/nYBsv7LgY9A",
     "Panduan-FB-Meraih-Cuan": "https://sfile.mobi/yg21mtaFmJy",
+    "1guy-1jar": "https://sfile.mobi/96QZ6301oXQ",
 };
